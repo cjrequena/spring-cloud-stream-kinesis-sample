@@ -32,7 +32,6 @@ public class FooSourceService {
 
   public void send(String foo) {
     fooChannelOutput.send(MessageBuilder.withPayload(foo).build());
-    log.debug("Message sent {}", foo);
   }
 
 }

@@ -7,6 +7,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+
+import java.util.UUID;
 
 /**
  * <p>
@@ -22,6 +26,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Log4j2
 @SpringBootApplication
 @EnableAutoConfiguration
+@EnableScheduling
 public class SourceMainApplication implements CommandLineRunner {
 
   private static Class<SourceMainApplication> mainApplicationClass = SourceMainApplication.class;
@@ -44,21 +49,30 @@ public class SourceMainApplication implements CommandLineRunner {
   }
 
   @Override public void run(String... args) throws Exception {
-    for (int i = 0; i < 10; i++) {
-      fooSourceService.send("foo-" + i);
-    }
+    log.info("================================================");
+    log.info("SPRING::CLOUD::STREAM::KINESIS::SAMPLE::PRODUCER");
+    log.info("================================================");
+
+  }
+
+  @Scheduled(fixedDelay = 3000L)
+  public void produce() {
+    UUID id = UUID.randomUUID();
+    log.debug("Before sending : {}" + id);
+    this.fooSourceService.send(id.toString());
+    log.debug("After sending : {}" + id);
   }
 
   //  @Autowired
-//  private Source source;
-//
-//  @Scheduled(fixedRate = 2000L)
-//  public void sendMessage() {
-//    UUID id = UUID.randomUUID();
-//    System.out.println("Before sending : " + id);
-//    source.output().send(MessageBuilder.withPayload(id).build());
-//    System.out.println("After sending : " + id);
-//  }
+  //  private Source source;
+  //
+  //  @Scheduled(fixedRate = 2000L)
+  //  public void sendMessage() {
+  //    UUID id = UUID.randomUUID();
+  //    System.out.println("Before sending : " + id);
+  //    source.output().send(MessageBuilder.withPayload(id).build());
+  //    System.out.println("After sending : " + id);
+  //  }
 
 }
 
